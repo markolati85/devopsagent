@@ -1,0 +1,43 @@
+name: Deploy to Serbian server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH with password
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}       # e.g. 185.241.214.234
+          username: ${{ secrets.SERVER_USER }}   # e.g. root
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }}       # defaults to 22 if unset
+          script: |
+            set -e
+            # Directory on your server where the code should live:
+            PROJECT_DIR="/root/devopsagent"
+
+            # Clone or update the repo
+            if [ ! -d "$PROJECT_DIR" ]; then
+              mkdir -p "$PROJECT_DIR"
+              git clone https://github.com/${{ github.repository }} "$PROJECT_DIR"
+            else
+              cd "$PROJECT_DIR"
+              git pull origin main
+            fi
+
+            # Build and restart the backend container
+            cd "$PROJECT_DIR/backend"
+            docker build -t devops-ai-agent-backend .
+            if [ $(docker ps -q -f name=devops-ai-agent-backend) ]; then
+              docker stop devops-ai-agent-backend
+              docker rm devops-ai-agent-backend
+            fi
+            docker run -d --name devops-ai-agent-backend -p 3000:3000 devops-ai-agent-backend
