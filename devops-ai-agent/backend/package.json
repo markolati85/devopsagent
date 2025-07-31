@@ -1,0 +1,13 @@
+{
+  "name": "devops-ai-agent-backend",
+  "version": "0.1.0",
+  "description": "Backend API for the DevOps AI Agent",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0",
+    "uuid": "^9.0.0"
+  }
+}
