@@ -15,13 +15,13 @@ jobs:
       - name: Deploy via SSH with password
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.SERVER_HOST }}       # e.g. 185.241.214.234
-          username: ${{ secrets.SERVER_USER }}   # e.g. root
+          host: 185.241.214.234         # or use ${{ secrets.SERVER_HOST }}
+          username: root                # or use ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT }}       # defaults to 22 if unset
+          port: 22                      # or use ${{ secrets.SERVER_PORT }}
           script: |
             set -e
-            # Directory on your server where the code should live:
+            # Define directory where the code should live on the server
             PROJECT_DIR="/root/devopsagent"
 
             # Clone or update the repo
@@ -41,3 +41,4 @@ jobs:
               docker rm devops-ai-agent-backend
             fi
             docker run -d --name devops-ai-agent-backend -p 3000:3000 devops-ai-agent-backend
+
