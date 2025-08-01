@@ -8,15 +8,26 @@
 </head>
 <body>
   <div class="container">
-    <h1>Nexus AI DevOps</h1>
-    <p>AI-powered trading & DevOps agent</p>
+    <h1>🚀 Nexus AI DevOps</h1>
+    <p>AI-powered trading & devops agent</p>
+
     <div id="status">🧠 Claude 3.5 + GPT-4o connected</div>
-    <div id="chat-box"></div>
+
+    <div id="chat-box" class="chat-box"></div>
+
     <div class="input-area">
-      <input id="command-input" placeholder="e.g., Create ETH bot on OKX with 20x leverage" />
+      <input
+        id="command-input"
+        placeholder="e.g., Create ETH bot on OKX with 20x leverage"
+      />
       <button onclick="sendCommand()">Send</button>
     </div>
+
+    <div class="footer">
+      <p>🛠️ Built with LangChain, Claude & GPT-4o</p>
+    </div>
   </div>
+
   <script src="app.js"></script>
 </body>
 </html>
