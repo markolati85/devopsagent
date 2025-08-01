@@ -1,0 +1,41 @@
+body {
+  background-color: #0d1117;
+  color: #c9d1d9;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.container {
+  width: 100%;
+  max-width: 600px;
+}
+#chat-box {
+  background-color: #161b22;
+  height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.input-area {
+  display: flex;
+}
+#command-input {
+  flex: 1;
+  padding: 10px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 8px 0 0 8px;
+  color: white;
+}
+button {
+  padding: 10px;
+  background: #238636;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  color: white;
+  cursor: pointer;
+}
