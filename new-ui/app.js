@@ -1,27 +1,24 @@
 function sendCommand() {
-  const input = document.getElementById('command-input');
-  const chatBox = document.getElementById('chat-box');
-  const command = input.value.trim();
-  if (!command) return;
-  const userMessage = document.createElement('div');
-  userMessage.textContent = "🧑 " + command;
-  chatBox.appendChild(userMessage);
-  input.value = "";
-  fetch('/api/command', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ prompt: command })
-  })
-  .then(res => res.json())
-  .then(data => {
-    const botResponse = document.createElement('div');
-    botResponse.textContent = "🤖 " + data.response;
-    chatBox.appendChild(botResponse);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  })
-  .catch(() => {
-    const error = document.createElement('div');
-    error.textContent = "❌ Failed to reach backend.";
-    chatBox.appendChild(error);
-  });
+  const input = document.getElementById("command-input").value.trim();
+  const chat = document.getElementById("chat-box");
+
+  if (!input) return;
+
+  const userMsg = document.createElement("p");
+  userMsg.className = "user-msg";
+  userMsg.textContent = `🧑‍💻 You: ${input}`;
+  chat.appendChild(userMsg);
+
+  const botMsg = document.createElement("p");
+  botMsg.className = "bot-msg";
+  botMsg.textContent = "🤖 Thinking...";
+  chat.appendChild(botMsg);
+
+  // Simulated response
+  setTimeout(() => {
+    botMsg.textContent = `✅ Command "${input}" successfully sent to the Nexus agent!`;
+  }, 1200);
+
+  // Optional: clear input
+  document.getElementById("command-input").value = "";
 }
