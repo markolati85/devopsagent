@@ -1,0 +1,31 @@
+name: Deploy Nexus UI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'new-ui/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Copy UI files to server via rsync
+        run: |
+          rsync -avz --delete --progress \
+            new-ui/ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}"
+
+      - name: Reload NGINX
+        run: |
+          ssh -o StrictHostKeyChecking=no "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            'sudo systemctl reload nginx || true'
