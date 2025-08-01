@@ -1,42 +1,30 @@
-name: Deploy to Serbian server
+name: Deploy Nexus UI
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'new-ui/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Deploy via SSH with password
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: 185.241.214.234          # or use ${{ secrets.SERVER_HOST }}
-          username: root                 # or use ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: 22                       # or use ${{ secrets.SERVER_PORT }}
-          script: |
-            set -e
-            PROJECT_DIR="/root/devopsagent"
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
 
-            # Clone or update the repo
-            if [ ! -d "$PROJECT_DIR" ]; then
-              mkdir -p "$PROJECT_DIR"
-              git clone https://github.com/${{ github.repository }} "$PROJECT_DIR"
-            else
-              cd "$PROJECT_DIR"
-              git pull origin main
-            fi
+      - name: Copy UI files to server via rsync
+        run: |
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" rsync -avz --delete --progress -e "ssh -o StrictHostKeyChecking=no" \
+            new-ui/ \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.PROJECT_DIR }}"
 
-            # Build and run the backend container
-            cd "$PROJECT_DIR/devops-ai-agent/backend"
-            docker build -t devops-ai-agent-backend .
-            if [ $(docker ps -q -f name=devops-ai-agent-backend) ]; then
-              docker stop devops-ai-agent-backend
-              docker rm devops-ai-agent-backend
-            fi
-            docker run -d --name devops-ai-agent-backend -p 3000:3000 devops-ai-agent-backend
+      - name: Reload NGINX
+        run: |
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            'sudo systemctl reload nginx || true'
